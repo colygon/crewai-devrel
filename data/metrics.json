@@ -1,0 +1,32 @@
+{
+  "github": {
+    "stars": 22500,
+    "forks": 2800,
+    "contributors_30d": 145,
+    "prs_merged_30d": 89,
+    "issues_closed_30d": 156,
+    "watchers": 1200
+  },
+  "community": {
+    "discord_members": 15000,
+    "monthly_active_participants": 3200,
+    "events_this_month": 4
+  },
+  "adoption": {
+    "templates_shipped": 12,
+    "integrations_shipped": 28,
+    "quickstart_completions": 8500,
+    "unique_projects_shared": 450
+  },
+  "content": {
+    "blog_views_month": 45000,
+    "video_watch_hours": 2100,
+    "newsletter_subscribers": 8900
+  },
+  "quality": {
+    "avg_time_to_first_response_hours": 18,
+    "avg_time_to_merge_days": 3.2,
+    "developer_nps": 62
+  },
+  "updated_at": "2024-11-26T19:00:00Z"
+}

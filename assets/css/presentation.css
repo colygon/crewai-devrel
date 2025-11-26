@@ -1,0 +1,450 @@
+/* CrewAI DevRel - Presentation Mode Styles */
+
+/* Presentation Container */
+.presentation-mode {
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    position: relative;
+    background: var(--bg-0);
+}
+
+/* Slide Wrapper */
+.slides-wrapper {
+    width: 100%;
+    height: calc(100vh - 80px);
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-xl);
+}
+
+/* Individual Slides */
+.slide {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-2xl);
+}
+
+.slide.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.slide-content {
+    max-width: 1000px;
+    width: 100%;
+}
+
+/* Title Slide */
+.slide-title {
+    text-align: center;
+}
+
+.slide-title h1 {
+    font-size: clamp(3rem, 6vw, 5rem);
+    margin-bottom: var(--space-xl);
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.slide-title p {
+    font-size: 1.5rem;
+    color: var(--muted);
+}
+
+/* Slide Controls */
+.slide-controls {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(15, 22, 41, 0.95);
+    backdrop-filter: blur(10px);
+    border-top: 1px solid var(--border);
+    padding: var(--space-md);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 1000;
+}
+
+.slide-nav-buttons {
+    display: flex;
+    gap: var(--space-md);
+}
+
+.slide-nav-button {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: var(--space-sm) var(--space-lg);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    font-weight: 500;
+    transition: all var(--transition-base);
+}
+
+.slide-nav-button:hover:not(:disabled) {
+    background: var(--primary);
+    color: var(--bg-0);
+    border-color: var(--primary);
+}
+
+.slide-nav-button:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+
+.slide-counter {
+    font-family: var(--font-mono);
+    font-size: 0.875rem;
+    color: var(--muted);
+}
+
+.slide-counter .current {
+    color: var(--primary);
+    font-weight: 700;
+}
+
+.slide-actions {
+    display: flex;
+    gap: var(--space-sm);
+}
+
+.action-button {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text);
+    width: 36px;
+    height: 36px;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all var(--transition-base);
+    font-size: 1rem;
+}
+
+.action-button:hover {
+    background: var(--primary);
+    color: var(--bg-0);
+    border-color: var(--primary);
+}
+
+.action-button.active {
+    background: var(--primary);
+    color: var(--bg-0);
+    border-color: var(--primary);
+}
+
+/* Progress Bar */
+.progress-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: var(--border);
+    z-index: 1001;
+}
+
+.progress-fill {
+    height: 100%;
+    background: var(--gradient-primary);
+    transition: width 0.3s ease;
+    width: 0%;
+}
+
+/* Speaker Notes Panel */
+.notes-panel {
+    position: fixed;
+    bottom: 80px;
+    left: 0;
+    right: 0;
+    max-height: 200px;
+    background: rgba(18, 26, 46, 0.98);
+    backdrop-filter: blur(10px);
+    border-top: 1px solid var(--border);
+    padding: var(--space-lg);
+    overflow-y: auto;
+    transform: translateY(100%);
+    transition: transform 0.3s ease;
+    z-index: 999;
+}
+
+.notes-panel.active {
+    transform: translateY(0);
+}
+
+.notes-content {
+    max-width: 1000px;
+    margin: 0 auto;
+    color: var(--muted);
+    font-size: 0.875rem;
+    line-height: 1.6;
+}
+
+.notes-content h4 {
+    color: var(--primary);
+    margin-bottom: var(--space-sm);
+    font-size: 1rem;
+}
+
+.notes-content ul {
+    padding-left: var(--space-lg);
+}
+
+/* Fullscreen Mode */
+.presentation-mode.fullscreen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 9999;
+}
+
+/* Home Button */
+.home-button {
+    position: fixed;
+    top: var(--space-md);
+    left: var(--space-md);
+    background: rgba(18, 26, 46, 0.95);
+    color: var(--text);
+    padding: var(--space-sm) var(--space-lg);
+    border-radius: var(--radius-md);
+    text-decoration: none;
+    font-size: 0.875rem;
+    font-weight: 500;
+    border: 1px solid var(--border);
+    transition: all var(--transition-base);
+    z-index: 100;
+}
+
+.home-button:hover {
+    background: var(--primary);
+    color: var(--bg-0);
+    border-color: var(--primary);
+}
+
+/* Slide Content Layouts */
+.content-two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-2xl);
+    align-items: start;
+}
+
+.content-highlight {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--primary);
+    padding: var(--space-lg);
+    border-radius: var(--radius-md);
+    margin: var(--space-lg) 0;
+}
+
+.content-list {
+    list-style: none;
+    padding: 0;
+}
+
+.content-list li {
+    padding: var(--space-md);
+    margin-bottom: var(--space-sm);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    transition: all var(--transition-base);
+}
+
+.content-list li:hover {
+    border-color: var(--primary);
+    transform: translateX(4px);
+}
+
+.content-list li::before {
+    content: '→';
+    color: var(--primary);
+    font-weight: 700;
+    margin-right: var(--space-sm);
+}
+
+/* Diagram Styles */
+.diagram-container {
+    position: relative;
+    padding: var(--space-xl);
+    min-height: 300px;
+}
+
+.diagram-node {
+    position: relative;
+    background: var(--surface);
+    border: 2px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: var(--space-lg);
+    margin: var(--space-md);
+    transition: all var(--transition-base);
+}
+
+.diagram-node.agent {
+    border-color: var(--primary);
+    box-shadow: 0 0 20px rgba(6, 214, 160, 0.2);
+}
+
+.diagram-node.task {
+    border-color: var(--accent);
+    box-shadow: 0 0 20px rgba(124, 58, 237, 0.2);
+}
+
+.diagram-node.tool {
+    border-color: var(--cyan);
+    box-shadow: 0 0 20px rgba(34, 211, 238, 0.2);
+    padding: var(--space-sm) var(--space-md);
+    display: inline-block;
+    border-radius: var(--radius-xl);
+}
+
+.diagram-node h4 {
+    margin: 0;
+    font-size: 1rem;
+    color: var(--text);
+}
+
+.diagram-node p {
+    margin: var(--space-sm) 0 0;
+    font-size: 0.875rem;
+    color: var(--muted);
+}
+
+/* Code in Slides */
+.slide pre {
+    font-size: 0.875rem;
+    max-height: 500px;
+    overflow-y: auto;
+}
+
+.slide code {
+    font-size: 0.85em;
+}
+
+/* Animations */
+@keyframes slideInFromRight {
+    from {
+        opacity: 0;
+        transform: translateX(50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes slideInFromLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes fadeInScale {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.animate-in {
+    animation: fadeInScale 0.5s ease forwards;
+}
+
+/* Help Text */
+.help-text {
+    position: fixed;
+    bottom: 90px;
+    right: var(--space-md);
+    background: rgba(18, 26, 46, 0.95);
+    border: 1px solid var(--border);
+    padding: var(--space-sm) var(--space-md);
+    border-radius: var(--radius-md);
+    font-size: 0.75rem;
+    color: var(--muted);
+    z-index: 100;
+    opacity: 0.7;
+    transition: opacity var(--transition-base);
+}
+
+.help-text:hover {
+    opacity: 1;
+}
+
+/* Responsive Presentation */
+@media (max-width: 768px) {
+    .slides-wrapper {
+        height: calc(100vh - 100px);
+        padding: var(--space-md);
+    }
+    
+    .slide {
+        padding: var(--space-md);
+    }
+    
+    .slide-title h1 {
+        font-size: 2rem;
+    }
+    
+    .slide-title p {
+        font-size: 1.125rem;
+    }
+    
+    .content-two-col {
+        grid-template-columns: 1fr;
+        gap: var(--space-lg);
+    }
+    
+    .slide pre {
+        font-size: 0.75rem;
+    }
+    
+    .notes-panel {
+        max-height: 150px;
+    }
+    
+    .help-text {
+        display: none;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .slide {
+        transition: none;
+    }
+    
+    .animate-in {
+        animation: none;
+        opacity: 1;
+        transform: none;
+    }
+}
