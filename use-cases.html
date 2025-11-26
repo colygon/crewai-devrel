@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CrewAI Use Cases | Multi-Agent Patterns</title>
+    <meta name="description" content="Production-ready multi-agent patterns and use cases for CrewAI - from content production to data processing">
+    <link rel="stylesheet" href="assets/css/styles.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🤖</text></svg>">
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <nav>
+            <div class="nav-brand">🤖 CrewAI DevRel</div>
+            <button class="mobile-menu-toggle" aria-label="Toggle menu" aria-expanded="false">☰</button>
+            <ul class="nav-links">
+                <li><a href="index.html">Overview</a></li>
+                <li><a href="how-it-works.html">How it Works</a></li>
+                <li><a href="use-cases.html" class="active">Use Cases</a></li>
+                <li><a href="ecosystem.html">Ecosystem</a></li>
+                <li><a href="https://github.com/crewAIInc/crewAI" target="_blank" rel="noopener">GitHub ↗</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Hero -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Multi-Agent Use Cases</h1>
+            <p>Production-ready patterns for orchestrating AI agent crews. Each pattern includes architecture, code, and performance tips.</p>
+        </div>
+    </section>
+
+    <!-- Use Case 1: Research & Writing -->
+    <section class="section">
+        <div class="container">
+            <div class="card">
+                <h2>📰 Research & Writing Crew</h2>
+                <p><strong>Problem:</strong> Creating high-quality content requires research, writing, and editing - typically taking hours per article.</p>
+                <p><strong>Solution:</strong> A 3-agent crew that researches topics, writes drafts, and reviews quality - producing publication-ready content in minutes.</p>
+                
+                <h3 class="mt-xl">Architecture</h3>
+                <div style="display: flex; align-items: center; justify-content: center; gap: 2rem; margin: 2rem 0; flex-wrap: wrap;">
+                    <div class="diagram-node agent">
+                        <h4>Researcher</h4>
+                        <p>Web search, fact verification</p>
+                    </div>
+                    <div style="color: var(--primary); font-size: 2rem;">→</div>
+                    <div class="diagram-node agent">
+                        <h4>Writer</h4>
+                        <p>Content generation, SEO</p>
+                    </div>
+                    <div style="color: var(--primary); font-size: 2rem;">→</div>
+                    <div class="diagram-node agent">
+                        <h4>Editor</h4>
+                        <p>Quality review, polish</p>
+                    </div>
+                </div>
+
+                <h3>Implementation</h3>
+                <div class="code-block-header">
+                    <span class="code-language">python</span>
+                    <button class="copy-button">Copy</button>
+                </div>
+                <pre><code class="language-python">from crewai import Agent, Task, Crew, Process
+from crewai_tools import SerperDevTool, WebsiteSearchTool
+
+# Tools
+search = SerperDevTool()
+scrape = WebsiteSearchTool()
+
+# Agents
+researcher = Agent(
+    role="Senior Research Analyst",
+    goal="Find accurate, up-to-date information about {topic}",
+    backstory="Expert researcher with journalism background. You verify facts from multiple sources.",
+    tools=[search, scrape],
+    verbose=True
+)
+
+writer = Agent(
+    role="Content Writer",
+    goal="Write engaging, SEO-optimized articles about {topic}",
+    backstory="Award-winning tech writer skilled at explaining complex topics simply.",
+    verbose=True
+)
+
+editor = Agent(
+    role="Editor",
+    goal="Review and polish content for quality and accuracy",
+    backstory="Veteran editor with eye for detail and strong grasp of AP style.",
+    verbose=True
+)
+
+# Tasks
+research_task = Task(
+    description="""Research {topic} thoroughly:
+    1. Find 3-5 credible sources
+    2. Extract key facts, statistics, and quotes
+    3. Identify trending discussions
+    4. Note any controversies or debates""",
+    agent=researcher,
+    expected_output="Bulleted research findings with source URLs"
+)
+
+write_task = Task(
+    description="""Write an 800-word article about {topic}:
+    1. Engaging headline and intro
+    2. Clear structure with subheadings
+    3. Incorporate research findings
+    4. Include relevant examples
+    5. SEO keywords naturally integrated
+    6. Strong conclusion with takeaways""",
+    agent=writer,
+    context=[research_task],
+    expected_output="Complete article in markdown format"
+)
+
+edit_task = Task(
+    description="""Review and edit the article:
+    1. Check factual accuracy against research
+    2. Improve clarity and flow
+    3. Fix grammar and style issues
+    4. Ensure consistent tone
+    5. Verify all claims have sources""",
+    agent=editor,
+    context=[research_task, write_task],
+    expected_output="Polished, publication-ready article"
+)
+
+# Assemble and run crew
+crew = Crew(
+    agents=[researcher, writer, editor],
+    tasks=[research_task, write_task, edit_task],
+    process=Process.sequential,
+    verbose=True
+)
+
+result = crew.kickoff(inputs={"topic": "Multi-agent AI systems in 2024"})
+print(result)</code></pre>
+
+                <div class="content-highlight mt-lg">
+                    <h4>Performance Tips</h4>
+                    <ul>
+                        <li><strong>Add memory:</strong> Set <code>memory=True</code> so agents remember writing style preferences</li>
+                        <li><strong>Control costs:</strong> Use GPT-3.5 for research, GPT-4 only for writing and editing</li>
+                        <li><strong>Speed optimization:</strong> Set researcher's <code>max_iter=3</code> to limit search depth</li>
+                        <li><strong>Quality gate:</strong> Add validation task to check readability score and fact density</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Use Case 2: Sales Automation -->
+    <section class="section bg-gradient">
+        <div class="container">
+            <div class="card">
+                <h2>💼 Sales Operations Crew</h2>
+                <p><strong>Problem:</strong> Sales teams spend 65% of time on research, data entry, and email writing - not selling.</p>
+                <p><strong>Solution:</strong> Automated crew that enriches leads, generates personalized outreach, and updates CRM.</p>
+                
+                <h3 class="mt-xl">Architecture</h3>
+                <div style="display: flex; align-items: center; justify-content: center; gap: 1.5rem; margin: 2rem 0; flex-wrap: wrap;">
+                    <div class="diagram-node agent">
+                        <h4>Lead Enricher</h4>
+                        <p>Company research</p>
+                    </div>
+                    <div style="color: var(--primary); font-size: 2rem;">→</div>
+                    <div class="diagram-node agent">
+                        <h4>Email Writer</h4>
+                        <p>Personalized outreach</p>
+                    </div>
+                    <div style="color: var(--primary); font-size: 2rem;">→</div>
+                    <div class="diagram-node agent">
+                        <h4>CRM Manager</h4>
+                        <p>Data entry, tracking</p>
+                    </div>
+                </div>
+
+                <h3>Implementation</h3>
+                <div class="code-block-header">
+                    <span class="code-language">python</span>
+                    <button class="copy-button">Copy</button>
+                </div>
+                <pre><code class="language-python">from crewai import Agent, Task, Crew, Process
+from crewai_tools import SerperDevTool
+from custom_tools import CRMTool  # Your custom CRM integration
+
+search = SerperDevTool()
+crm = CRMTool()
+
+enricher = Agent(
+    role="Lead Research Specialist",
+    goal="Find detailed information about {company} and key decision makers",
+    backstory="Sales intelligence expert who uncovers buying signals and pain points.",
+    tools=[search]
+)
+
+writer = Agent(
+    role="Sales Development Rep",
+    goal="Write personalized, value-focused emails that book meetings",
+    backstory="Top SDR with 40% response rate. You lead with value, not features."
+)
+
+crm_manager = Agent(
+    role="CRM Administrator",
+    goal="Maintain accurate, up-to-date records in CRM",
+    backstory="Detail-oriented ops specialist who ensures data quality.",
+    tools=[crm]
+)
+
+# Tasks
+enrich_task = Task(
+    description="""Research {company}:
+    1. Company size, industry, recent news
+    2. Technology stack and tools they use
+    3. Key decision makers and their backgrounds
+    4. Recent funding, expansion, or initiatives
+    5. Potential pain points we can solve""",
+    agent=enricher,
+    expected_output="Structured company profile with 10+ data points"
+)
+
+email_task = Task(
+    description="""Write personalized cold email to {contact} at {company}:
+    1. Attention-grabbing subject line
+    2. Relevant hook based on recent company news
+    3. Clear value proposition for their specific situation
+    4. Soft CTA for brief call
+    5. Professional signature
+    Keep it under 100 words.""",
+    agent=writer,
+    context=[enrich_task],
+    expected_output="Email with subject and body"
+)
+
+crm_task = Task(
+    description="""Update CRM for {company}:
+    1. Create/update company record
+    2. Add contact with enriched data
+    3. Log email sent
+    4. Set follow-up reminder for 3 days
+    5. Tag with relevant segments""",
+    agent=crm_manager,
+    context=[enrich_task, email_task],
+    expected_output="Confirmation of CRM updates"
+)
+
+crew = Crew(
+    agents=[enricher, writer, crm_manager],
+    tasks=[enrich_task, email_task, crm_task],
+    process=Process.sequential
+)
+
+# Process multiple leads in parallel
+leads = [
+    {"company": "TechCorp", "contact": "jane@techcorp.com"},
+    {"company": "DataCo", "contact": "john@dataco.com"}
+]
+
+for lead in leads:
+    result = crew.kickoff(inputs=lead)
+    print(f"Processed {lead['company']}: {result}")</code></pre>
+
+                <div class="content-highlight mt-lg">
+                    <h4>Performance Tips</h4>
+                    <ul>
+                        <li><strong>Parallel processing:</strong> Use <code>Process.parallel</code> for independent leads</li>
+                        <li><strong>Rate limiting:</strong> Add delays between CRM writes to avoid API throttling</li>
+                        <li><strong>Idempotency:</strong> Check if company exists before creating duplicate records</li>
+                        <li><strong>A/B testing:</strong> Create multiple email variations and track performance</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Use Case 3: Code Review -->
+    <section class="section">
+        <div class="container">
+            <div class="card">
+                <h2>💻 Code Review & Refactor Crew</h2>
+                <p><strong>Problem:</strong> Code reviews are time-consuming and often miss subtle bugs or opportunities for improvement.</p>
+                <p><strong>Solution:</strong> Automated review crew that analyzes code, suggests improvements, and generates documentation.</p>
+                
+                <h3 class="mt-xl">Implementation</h3>
+                <div class="code-block-header">
+                    <span class="code-language">python</span>
+                    <button class="copy-button">Copy</button>
+                </div>
+                <pre><code class="language-python">from crewai import Agent, Task, Crew, Process
+from crewai_tools import FileReadTool, CodeInterpreterTool
+
+file_reader = FileReadTool()
+code_runner = CodeInterpreterTool()
+
+reviewer = Agent(
+    role="Senior Code Reviewer",
+    goal="Identify bugs, security issues, and improvement opportunities in {file_path}",
+    backstory="Principal engineer with 15 years experience. You catch subtle bugs others miss.",
+    tools=[file_reader]
+)
+
+refactorer = Agent(
+    role="Refactoring Specialist",
+    goal="Suggest clean, maintainable code improvements",
+    backstory="Expert in design patterns and SOLID principles."
+)
+
+documenter = Agent(
+    role="Technical Writer",
+    goal="Generate clear documentation for code changes",
+    backstory="You make complex code understandable to all skill levels."
+)
+
+review_task = Task(
+    description="""Review {file_path}:
+    1. Read the file
+    2. Check for bugs and edge cases
+    3. Identify security vulnerabilities
+    4. Note performance issues
+    5. Check test coverage gaps""",
+    agent=reviewer,
+    expected_output="Detailed review with specific line numbers and issues"
+)
+
+refactor_task = Task(
+    description="""Suggest refactoring for {file_path}:
+    1. Improve code organization
+    2. Extract repeated logic
+    3. Simplify complex functions
+    4. Add type hints if missing
+    5. Suggest better variable names""",
+    agent=refactorer,
+    context=[review_task],
+    expected_output="Concrete refactoring suggestions with code examples"
+)
+
+docs_task = Task(
+    description="""Generate documentation:
+    1. Function/class docstrings
+    2. Complex algorithm explanations
+    3. Usage examples
+    4. Edge cases and limitations""",
+    agent=documenter,
+    context=[review_task, refactor_task],
+    expected_output="Markdown documentation"
+)
+
+crew = Crew(
+    agents=[reviewer, refactorer, documenter],
+    tasks=[review_task, refactor_task, docs_task],
+    process=Process.sequential
+)
+
+result = crew.kickoff(inputs={"file_path": "src/payment_processor.py"})
+print(result)</code></pre>
+
+                <div class="content-highlight mt-lg">
+                    <h4>Performance Tips</h4>
+                    <ul>
+                        <li><strong>File size limits:</strong> Split large files into logical sections for review</li>
+                        <li><strong>Language-specific tools:</strong> Add linters as custom tools (pylint, eslint, etc.)</li>
+                        <li><strong>Context limits:</strong> Focus review on changed lines + surrounding context</li>
+                        <li><strong>Test generation:</strong> Add 4th agent to generate unit tests for new code</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Use Case 4: Data ETL -->
+    <section class="section bg-gradient">
+        <div class="container">
+            <div class="card">
+                <h2>🎯 Data ETL & Quality Crew</h2>
+                <p><strong>Problem:</strong> Data pipelines break due to schema changes, invalid data, and missing validation logic.</p>
+                <p><strong>Solution:</strong> Crew that extracts, transforms, validates, and reports on data quality.</p>
+                
+                <h3 class="mt-xl">Architecture (Parallel Validation)</h3>
+                <div style="display: flex; align-items: center; justify-content: center; gap: 2rem; margin: 2rem 0; flex-wrap: wrap;">
+                    <div>
+                        <div class="diagram-node agent">Extractor</div>
+                        <div style="text-align: center; color: var(--primary); margin: 0.5rem 0;">↓</div>
+                        <div class="diagram-node agent">Transformer</div>
+                        <div style="text-align: center; color: var(--primary); margin: 0.5rem 0;">↓ ↓ ↓</div>
+                        <div style="display: flex; gap: 0.5rem; justify-content: center;">
+                            <div class="diagram-node task" style="font-size: 0.8rem;">Schema</div>
+                            <div class="diagram-node task" style="font-size: 0.8rem;">Quality</div>
+                            <div class="diagram-node task" style="font-size: 0.8rem;">Business</div>
+                        </div>
+                    </div>
+                </div>
+
+                <h3>Implementation</h3>
+                <div class="code-block-header">
+                    <span class="code-language">python</span>
+                    <button class="copy-button">Copy</button>
+                </div>
+                <pre><code class="language-python">from crewai import Agent, Task, Crew, Process
+from custom_tools import DatabaseTool, DataValidatorTool
+
+db = DatabaseTool()
+validator = DataValidatorTool()
+
+extractor = Agent(
+    role="Data Engineer",
+    goal="Extract data from {source} safely and efficiently",
+    backstory="Expert in SQL optimization and data extraction patterns.",
+    tools=[db]
+)
+
+transformer = Agent(
+    role="ETL Specialist",
+    goal="Transform data to match target schema",
+    backstory="You handle complex transformations and edge cases gracefully.",
+    memory=True  # Remember schema patterns
+)
+
+schema_validator = Agent(
+    role="Schema Validator",
+    goal="Ensure data matches expected schema",
+    backstory="Detail-oriented validator who catches type mismatches.",
+    tools=[validator]
+)
+
+quality_checker = Agent(
+    role="Data Quality Analyst",
+    goal="Check data completeness, accuracy, and consistency",
+    backstory="You find missing data, duplicates, and outliers.",
+    tools=[validator]
+)
+
+business_validator = Agent(
+    role="Business Rules Validator",
+    goal="Verify data meets business logic requirements",
+    backstory="You understand domain rules and catch logical errors."
+)
+
+# Tasks
+extract_task = Task(
+    description="Extract records from {source} for date range {date_range}",
+    agent=extractor,
+    expected_output="Raw data in JSON format"
+)
+
+transform_task = Task(
+    description="Transform data to target schema with proper types and formatting",
+    agent=transformer,
+    context=[extract_task],
+    expected_output="Transformed data matching target schema"
+)
+
+# Parallel validation tasks
+schema_task = Task(
+    description="Validate schema compliance: types, required fields, constraints",
+    agent=schema_validator,
+    context=[transform_task],
+    expected_output="Schema validation report"
+)
+
+quality_task = Task(
+    description="Check data quality: nulls, duplicates, outliers, completeness",
+    agent=quality_checker,
+    context=[transform_task],
+    expected_output="Quality metrics report"
+)
+
+business_task = Task(
+    description="Validate business rules: totals, relationships, logic constraints",
+    agent=business_validator,
+    context=[transform_task],
+    expected_output="Business rules validation report"
+)
+
+crew = Crew(
+    agents=[extractor, transformer, schema_validator, quality_checker, business_validator],
+    tasks=[extract_task, transform_task, schema_task, quality_task, business_task],
+    process=Process.sequential,  # Transform first, then parallel validation
+    memory=True,
+    memory_config={"provider": "chroma", "config": {"collection_name": "etl_patterns"}}
+)
+
+result = crew.kickoff(inputs={
+    "source": "production_db.orders",
+    "date_range": "2024-01-01 to 2024-01-31"
+})
+print(result)</code></pre>
+
+                <div class="content-highlight mt-lg">
+                    <h4>Performance Tips</h4>
+                    <ul>
+                        <li><strong>Batch processing:</strong> Process data in chunks to manage memory</li>
+                        <li><strong>Incremental validation:</strong> Store known valid patterns in memory</li>
+                        <li><strong>Parallel validators:</strong> Run schema, quality, business checks simultaneously</li>
+                        <li><strong>Retry logic:</strong> Add retries for transient database connection issues</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Use Case 5: Market Intelligence -->
+    <section class="section">
+        <div class="container">
+            <div class="card">
+                <h2>🔍 Market Intelligence Crew</h2>
+                <p><strong>Problem:</strong> Staying on top of competitors, market trends, and industry changes requires constant monitoring.</p>
+                <p><strong>Solution:</strong> Automated crew that tracks competitors, analyzes trends, and generates intelligence reports.</p>
+                
+                <h3 class="mt-xl">Implementation</h3>
+                <div class="code-block-header">
+                    <span class="code-language">python</span>
+                    <button class="copy-button">Copy</button>
+                </div>
+                <pre><code class="language-python">from crewai import Agent, Task, Crew, Process
+from crewai_tools import SerperDevTool, WebsiteSearchTool
+
+search = SerperDevTool()
+scrape = WebsiteSearchTool()
+
+monitor = Agent(
+    role="Competitive Intelligence Analyst",
+    goal="Monitor {competitors} for changes, news, and strategic moves",
+    backstory="Former strategy consultant. You spot patterns and implications others miss.",
+    tools=[search, scrape],
+    memory=True  # Remember past findings
+)
+
+analyst = Agent(
+    role="Market Analyst",
+    goal="Analyze trends and predict market movements",
+    backstory="Economics PhD who connects dots between data points.",
+    tools=[search]
+)
+
+reporter = Agent(
+    role="Intelligence Reporter",
+    goal="Synthesize findings into actionable intelligence briefing",
+    backstory="Former journalist turned analyst. You distill complexity into clarity."
+)
+
+monitor_task = Task(
+    description="""Monitor competitors: {competitors}
+    1. Check for product launches, pricing changes
+    2. Scan news, press releases, job postings
+    3. Analyze social media activity and sentiment
+    4. Compare to previous period (use memory)
+    5. Identify significant changes""",
+    agent=monitor,
+    expected_output="Structured findings with change log"
+)
+
+analyze_task = Task(
+    description="""Analyze market implications:
+    1. What do these changes signal?
+    2. Market share implications
+    3. Threats and opportunities for us
+    4. Recommended responses
+    5. Confidence levels for predictions""",
+    agent=analyst,
+    context=[monitor_task],
+    expected_output="Strategic analysis with recommendations"
+)
+
+report_task = Task(
+    description="""Generate weekly intelligence briefing:
+    1. Executive summary (3 bullets)
+    2. Top 3 competitive moves and implications
+    3. Market trend analysis
+    4. Strategic recommendations
+    5. Watch items for next period""",
+    agent=reporter,
+    context=[monitor_task, analyze_task],
+    expected_output="Professional briefing in markdown"
+)
+
+crew = Crew(
+    agents=[monitor, analyst, reporter],
+    tasks=[monitor_task, analyze_task, report_task],
+    process=Process.sequential,
+    memory=True,  # Track changes over time
+    memory_config={
+        "provider": "chroma",
+        "config": {"collection_name": "market_intel"}
+    }
+)
+
+# Run weekly
+result = crew.kickoff(inputs={
+    "competitors": ["CompetitorA.com", "CompetitorB.com", "CompetitorC.com"]
+})
+print(result)</code></pre>
+
+                <div class="content-highlight mt-lg">
+                    <h4>Performance Tips</h4>
+                    <ul>
+                        <li><strong>Entity memory:</strong> Store competitor profiles for delta detection</li>
+                        <li><strong>Scheduled runs:</strong> Set up weekly cron job for consistent monitoring</li>
+                        <li><strong>Alert thresholds:</strong> Add task to flag significant changes for immediate action</li>
+                        <li><strong>Historical trends:</strong> Query memory for 30/60/90 day comparisons</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="section bg-gradient">
+        <div class="container text-center">
+            <h2>Ready to Build Your Crew?</h2>
+            <p class="text-muted mb-xl">Start with these templates or create your own multi-agent pattern</p>
+            <div class="hero-buttons">
+                <a href="https://docs.crewai.com" target="_blank" rel="noopener" class="btn btn-primary">Read the Docs</a>
+                <a href="ecosystem.html" class="btn btn-secondary">Explore Ecosystem</a>
+                <a href="https://github.com/crewAIInc/crewAI" target="_blank" rel="noopener" class="btn btn-accent">View Examples on GitHub</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div>
+                    <p>&copy; 2024 CrewAI Developer Relations Strategy</p>
+                    <p class="text-muted">Built with ❤️ for the CrewAI community</p>
+                </div>
+                <ul class="footer-links">
+                    <li><a href="https://github.com/colygon/crewai-devrel" target="_blank" rel="noopener">GitHub</a></li>
+                    <li><a href="https://docs.crewai.com" target="_blank" rel="noopener">Documentation</a></li>
+                    <li><a href="https://crewai.com" target="_blank" rel="noopener">CrewAI.com</a></li>
+                </ul>
+            </div>
+        </div>
+    </footer>
+
+    <script src="assets/js/main.js"></script>
+</body>
+</html>

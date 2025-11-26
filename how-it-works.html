@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How CrewAI Works | Interactive Presentation</title>
+    <meta name="description" content="Interactive presentation explaining CrewAI's multi-agent orchestration architecture, patterns, and capabilities">
+    <link rel="stylesheet" href="assets/css/styles.css">
+    <link rel="stylesheet" href="assets/css/presentation.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🤖</text></svg>">
+</head>
+<body class="presentation-mode">
+    <!-- Progress Bar -->
+    <div class="progress-bar">
+        <div class="progress-fill" id="progress-fill"></div>
+    </div>
+
+    <!-- Home Button -->
+    <a href="index.html" class="home-button">🏠 Home</a>
+
+    <!-- Slides Wrapper -->
+    <div class="slides-wrapper">
+        
+        <!-- Slide 1: Title -->
+        <section class="slide active" data-slide-id="1">
+            <div class="slide-content slide-title">
+                <h1>🤖 How CrewAI Works</h1>
+                <p>Orchestrating Autonomous AI Agent Crews</p>
+                <p class="text-muted" style="margin-top: 2rem; font-size: 1rem;">Use arrow keys or space to navigate →</p>
+            </div>
+            <div class="slide-notes" style="display: none;">
+                Welcome to this interactive presentation on CrewAI. We'll explore how this powerful framework orchestrates multiple AI agents working together as a crew. Think of it like assembling a team of specialists, each with their own role and expertise, collaborating to solve complex problems.
+            </div>
+        </section>
+
+        <!-- Slide 2: What is CrewAI -->
+        <section class="slide" data-slide-id="2">
+            <div class="slide-content">
+                <h2>What is CrewAI?</h2>
+                <div class="content-two-col">
+                    <div>
+                        <h3>The Framework</h3>
+                        <p>CrewAI is an open-source Python framework for building and orchestrating autonomous AI agent crews.</p>
+                        <ul class="content-list">
+                            <li>Role-based agent design</li>
+                            <li>Task orchestration and dependencies</li>
+                            <li>Flexible LLM backends</li>
+                            <li>Built-in tools and memory</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3>Why Multi-Agent?</h3>
+                        <p>Single agents hit limits. Crews excel at:</p>
+                        <ul class="content-list">
+                            <li>Complex, multi-step workflows</li>
+                            <li>Specialized expertise per task</li>
+                            <li>Parallel execution at scale</li>
+                            <li>Real-world team dynamics</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="slide-notes" style="display: none;">
+                CrewAI moves beyond single-agent limitations by enabling multiple specialized agents to work together. Just like a real team where you have researchers, writers, reviewers - each agent brings specific expertise to accomplish complex goals that would be difficult for one agent alone.
+            </div>
+        </section>
+
+        <!-- Slide 3: Core Concepts -->
+        <section class="slide" data-slide-id="3">
+            <div class="slide-content">
+                <h2>Core Concepts</h2>
+                <div class="grid grid-2">
+                    <div class="card">
+                        <div class="card-icon">🎭</div>
+                        <h3>Agent</h3>
+                        <p>Autonomous entity with:</p>
+                        <ul>
+                            <li><strong>Role:</strong> "Senior Researcher"</li>
+                            <li><strong>Goal:</strong> "Find accurate information"</li>
+                            <li><strong>Backstory:</strong> Context and personality</li>
+                            <li><strong>Tools:</strong> Web search, file access</li>
+                            <li><strong>LLM:</strong> GPT-4, Claude, etc.</li>
+                        </ul>
+                    </div>
+                    <div class="card">
+                        <div class="card-icon">📋</div>
+                        <h3>Task</h3>
+                        <p>Discrete work unit with:</p>
+                        <ul>
+                            <li><strong>Description:</strong> What to do</li>
+                            <li><strong>Agent:</strong> Who does it</li>
+                            <li><strong>Expected Output:</strong> Deliverable</li>
+                            <li><strong>Dependencies:</strong> Task ordering</li>
+                            <li><strong>Context:</strong> Shared information</li>
+                        </ul>
+                    </div>
+                    <div class="card">
+                        <div class="card-icon">👥</div>
+                        <h3>Crew</h3>
+                        <p>Orchestrated team with:</p>
+                        <ul>
+                            <li><strong>Agents:</strong> Team members</li>
+                            <li><strong>Tasks:</strong> Work to complete</li>
+                            <li><strong>Process:</strong> Sequential or Parallel</li>
+                            <li><strong>Memory:</strong> Shared knowledge</li>
+                            <li><strong>Manager:</strong> Optional coordinator</li>
+                        </ul>
+                    </div>
+                    <div class="card">
+                        <div class="card-icon">⚙️</div>
+                        <h3>Process</h3>
+                        <p>Execution strategy:</p>
+                        <ul>
+                            <li><strong>Sequential:</strong> One after another</li>
+                            <li><strong>Hierarchical:</strong> Manager assigns</li>
+                            <li><strong>Parallel:</strong> Concurrent execution</li>
+                            <li><strong>Custom:</strong> Your own logic</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="slide-notes" style="display: none;">
+                Four core concepts power CrewAI. Agents are like team members with specific roles and tools. Tasks are the work items assigned to agents. A Crew brings agents and tasks together with a process that defines how work flows. This modular design makes complex workflows manageable.
+            </div>
+        </section>
+
+        <!-- Slide 4: Agent Anatomy -->
+        <section class="slide" data-slide-id="4">
+            <div class="slide-content">
+                <h2>Anatomy of an Agent</h2>
+                <pre><code class="language-python">from crewai import Agent
+from crewai_tools import SerperDevTool, FileReadTool
+
+researcher = Agent(
+    role="Senior Research Analyst",
+    
+    goal="Uncover cutting-edge developments in {topic}",
+    
+    backstory="""You're a seasoned researcher with a PhD in 
+    the field. You have an eye for detail and a knack for 
+    finding hidden gems in research papers and technical docs.""",
+    
+    tools=[
+        SerperDevTool(),      # Web search
+        FileReadTool()        # Read local files
+    ],
+    
+    verbose=True,             # Show reasoning
+    allow_delegation=False,   # Can't delegate to other agents
+    memory=True,              # Remember past interactions
+    llm="gpt-4o"             # LLM to use
+)</code></pre>
+                <div class="content-highlight" style="margin-top: 1.5rem;">
+                    <strong>Key Insight:</strong> Role, goal, and backstory shape the agent's behavior and decision-making. Tools give agents capabilities beyond text generation.
+                </div>
+            </div>
+            <div class="slide-notes" style="display: none;">
+                Let's dive into what makes an agent. The role, goal, and backstory aren't just flavor text - they fundamentally shape how the LLM responds and makes decisions. Tools extend the agent's capabilities beyond text, letting them search the web, read files, query APIs, and more. Memory lets agents learn from past interactions.
+            </div>
+        </section>
+
+        <!-- Slide 5: Task Dependencies -->
+        <section class="slide" data-slide-id="5">
+            <div class="slide-content">
+                <h2>Tasks and Dependencies</h2>
+                <div class="content-two-col">
+                    <div>
+                        <h3>Sequential Flow</h3>
+                        <pre><code class="language-python">task1 = Task(
+    description="Research {topic}",
+    agent=researcher,
+    expected_output="Bulleted findings"
+)
+
+task2 = Task(
+    description="Write article using research",
+    agent=writer,
+    context=[task1],  # Access task1 output
+    expected_output="800-word article"
+)
+
+task3 = Task(
+    description="Review and edit article",
+    agent=editor,
+    context=[task2],
+    expected_output="Polished article"
+)</code></pre>
+                    </div>
+                    <div>
+                        <h3>Parallel Execution</h3>
+                        <pre><code class="language-python"># Independent tasks run simultaneously
+tasks = [
+    Task(
+        description="Analyze competitor A",
+        agent=analyst1
+    ),
+    Task(
+        description="Analyze competitor B",
+        agent=analyst2
+    ),
+    Task(
+        description="Analyze competitor C",
+        agent=analyst3
+    )
+]
+
+crew = Crew(
+    agents=[analyst1, analyst2, analyst3],
+    tasks=tasks,
+    process=Process.parallel
+)</code></pre>
+                    </div>
+                </div>
+            </div>
+            <div class="slide-notes" style="display: none;">
+                Task dependencies are powerful. Sequential tasks pass context forward - the writer sees what the researcher found. Parallel tasks run simultaneously when they're independent, dramatically speeding up execution. You can mix both patterns in the same crew for sophisticated workflows.
+            </div>
+        </section>
+
+        <!-- Slide 6: Orchestration Engine -->
+        <section class="slide" data-slide-id="6">
+            <div class="slide-content">
+                <h2>Orchestration Engine</h2>
+                <div class="grid grid-3">
+                    <div class="card">
+                        <h4>1. Planning</h4>
+                        <p>Crew analyzes tasks and dependencies, builds execution plan based on process type</p>
+                    </div>
+                    <div class="card">
+                        <h4>2. Execution</h4>
+                        <p>Tasks assigned to agents. Agents use LLM + tools to complete work. Output captured</p>
+                    </div>
+                    <div class="card">
+                        <h4>3. Context Passing</h4>
+                        <p>Task outputs become context for dependent tasks. Memory system stores knowledge</p>
+                    </div>
+                </div>
+                <div class="content-highlight" style="margin-top: 2rem;">
+                    <h4>Under the Hood:</h4>
+                    <ul class="content-list">
+                        <li>Task scheduler manages execution order</li>
+                        <li>Context manager handles information flow</li>
+                        <li>Memory system persists learnings</li>
+                        <li>Error handling with retries and fallbacks</li>
+                        <li>Observability hooks for monitoring</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="slide-notes" style="display: none;">
+                The orchestration engine is CrewAI's brain. It plans the execution, assigns work, manages context flow between agents, and handles errors gracefully. Think of it as the invisible conductor making sure every agent knows what to do and has the information they need.
+            </div>
+        </section>
+
+        <!-- Slide 7: Tools and Memory -->
+        <section class="slide" data-slide-id="7">
+            <div class="slide-content">
+                <h2>Tools and Memory Systems</h2>
+                <div class="content-two-col">
+                    <div>
+                        <h3>Built-in Tools</h3>
+                        <ul class="content-list">
+                            <li><strong>SerperDevTool:</strong> Google search</li>
+                            <li><strong>WebsiteSearchTool:</strong> Scrape websites</li>
+                            <li><strong>FileReadTool:</strong> Read local files</li>
+                            <li><strong>CodeInterpreterTool:</strong> Execute code</li>
+                            <li><strong>DirectoryReadTool:</strong> List files</li>
+                        </ul>
+                        <h3 style="margin-top: 1.5rem;">Custom Tools</h3>
+                        <pre><code class="language-python">from crewai_tools import BaseTool
+
+class DatabaseQueryTool(BaseTool):
+    name: str = "Database Query"
+    description: str = "Query SQL database"
+    
+    def _run(self, query: str) -> str:
+        # Your implementation
+        return results</code></pre>
+                    </div>
+                    <div>
+                        <h3>Memory Types</h3>
+                        <ul class="content-list">
+                            <li><strong>Short-term:</strong> Current conversation context</li>
+                            <li><strong>Long-term:</strong> Persistent across sessions</li>
+                            <li><strong>Entity:</strong> Knowledge about people, places, things</li>
+                        </ul>
+                        <h3 style="margin-top: 1.5rem;">Memory Configuration</h3>
+                        <pre><code class="language-python">crew = Crew(
+    agents=[agent1, agent2],
+    tasks=[task1, task2],
+    memory=True,
+    memory_config={
+        "provider": "chroma",
+        "config": {
+            "collection_name": "crew_memory",
+            "path": "./memory"
+        }
+    }
+)</code></pre>
+                    </div>
+                </div>
+            </div>
+            <div class="slide-notes" style="display: none;">
+                Tools are what give agents superpowers beyond text generation. Built-in tools cover common needs, but you can create custom tools for anything - APIs, databases, proprietary systems. Memory lets agents learn and improve over time, remembering entities, past decisions, and accumulated knowledge.
+            </div>
+        </section>
+
+        <!-- Slide 8: Collaboration Patterns -->
+        <section class="slide" data-slide-id="8">
+            <div class="slide-content">
+                <h2>Common Collaboration Patterns</h2>
+                <div class="grid grid-3">
+                    <div class="card">
+                        <h4>🔄 Pipeline</h4>
+                        <p>Sequential handoffs</p>
+                        <div style="margin-top: 1rem;">
+                            <div class="diagram-node agent" style="margin: 0.5rem;">Research Agent</div>
+                            <div style="text-align: center; color: var(--primary);">↓</div>
+                            <div class="diagram-node agent" style="margin: 0.5rem;">Writer Agent</div>
+                            <div style="text-align: center; color: var(--primary);">↓</div>
+                            <div class="diagram-node agent" style="margin: 0.5rem;">Editor Agent</div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <h4>⚡ Fan-out</h4>
+                        <p>Parallel execution</p>
+                        <div style="margin-top: 1rem;">
+                            <div class="diagram-node agent" style="margin: 0.5rem auto;">Orchestrator</div>
+                            <div style="text-align: center; color: var(--primary);">↓ ↓ ↓</div>
+                            <div style="display: flex; gap: 0.5rem; justify-content: center;">
+                                <div class="diagram-node task" style="font-size: 0.75rem;">Task A</div>
+                                <div class="diagram-node task" style="font-size: 0.75rem;">Task B</div>
+                                <div class="diagram-node task" style="font-size: 0.75rem;">Task C</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <h4>👔 Manager-Worker</h4>
+                        <p>Hierarchical delegation</p>
+                        <div style="margin-top: 1rem;">
+                            <div class="diagram-node agent" style="margin: 0.5rem auto; border-color: var(--accent);">Manager Agent</div>
+                            <div style="text-align: center; color: var(--primary);">↓ assigns ↓</div>
+                            <div style="display: flex; gap: 0.5rem; justify-content: center;">
+                                <div class="diagram-node agent" style="font-size: 0.75rem;">Worker 1</div>
+                                <div class="diagram-node agent" style="font-size: 0.75rem;">Worker 2</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="slide-notes" style="display: none;">
+                Three common patterns emerge in crew design. Pipeline patterns work great for workflows with clear stages. Fan-out patterns excel when you have independent parallel work. Manager-worker patterns shine when tasks need to be dynamically assigned based on complexity or agent availability. Mix and match these patterns to fit your needs.
+            </div>
+        </section>
+
+        <!-- Slide 9: Ecosystem and Integrations -->
+        <section class="slide" data-slide-id="9">
+            <div class="slide-content">
+                <h2>Ecosystem and Integrations</h2>
+                <div class="grid grid-2">
+                    <div>
+                        <h3>LLM Providers</h3>
+                        <ul class="content-list">
+                            <li>OpenAI (GPT-4, GPT-3.5)</li>
+                            <li>Anthropic (Claude 3)</li>
+                            <li>Google (Gemini Pro)</li>
+                            <li>Azure OpenAI</li>
+                            <li>Local models (Ollama, LM Studio)</li>
+                        </ul>
+                        <h3 style="margin-top: 1.5rem;">Observability</h3>
+                        <ul class="content-list">
+                            <li>OpenTelemetry integration</li>
+                            <li>LangSmith tracing</li>
+                            <li>Custom logging hooks</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3>Vector Databases</h3>
+                        <ul class="content-list">
+                            <li>Chroma (default)</li>
+                            <li>LanceDB</li>
+                            <li>Qdrant</li>
+                            <li>Pinecone</li>
+                            <li>Weaviate</li>
+                        </ul>
+                        <h3 style="margin-top: 1.5rem;">Deployment</h3>
+                        <ul class="content-list">
+                            <li>Vercel serverless functions</li>
+                            <li>AWS Lambda</li>
+                            <li>Docker containers</li>
+                            <li>Kubernetes</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="slide-notes" style="display: none;">
+                CrewAI's ecosystem is expansive. Use any major LLM provider or even local models for privacy. Integrate with vector databases for persistent memory. Deploy anywhere Python runs - serverless, containers, traditional servers. Observability tools help you monitor and debug crew behavior in production.
+            </div>
+        </section>
+
+        <!-- Slide 10: Quick Start -->
+        <section class="slide" data-slide-id="10">
+            <div class="slide-content">
+                <h2>Quick Start: Your First Crew</h2>
+                <pre><code class="language-python">from crewai import Agent, Task, Crew, Process
+from crewai_tools import SerperDevTool
+
+# Initialize tool
+search = SerperDevTool()
+
+# Create agents
+researcher = Agent(
+    role="Researcher",
+    goal="Find the latest information on {topic}",
+    backstory="You're an expert researcher",
+    tools=[search]
+)
+
+writer = Agent(
+    role="Writer",
+    goal="Write engaging content about {topic}",
+    backstory="You're a skilled writer"
+)
+
+# Define tasks
+research_task = Task(
+    description="Research {topic} and compile findings",
+    agent=researcher,
+    expected_output="Bullet points with sources"
+)
+
+write_task = Task(
+    description="Write a blog post about {topic}",
+    agent=writer,
+    context=[research_task],
+    expected_output="800-word blog post"
+)
+
+# Assemble crew and execute
+crew = Crew(
+    agents=[researcher, writer],
+    tasks=[research_task, write_task],
+    process=Process.sequential,
+    verbose=True
+)
+
+result = crew.kickoff(inputs={"topic": "AI agent orchestration"})
+print(result)</code></pre>
+            </div>
+            <div class="slide-notes" style="display: none;">
+                This is all the code you need to create a functioning multi-agent crew. Two agents, two tasks, sequential execution. The researcher finds information using web search, the writer takes those findings and creates content. The context parameter ensures the writer sees what the researcher found. That's the power of CrewAI - complex orchestration made simple.
+            </div>
+        </section>
+
+        <!-- Slide 11: Real-World Use Cases -->
+        <section class="slide" data-slide-id="11">
+            <div class="slide-content">
+                <h2>Real-World Use Cases</h2>
+                <div class="grid grid-2">
+                    <div class="card">
+                        <h4>📰 Content Production</h4>
+                        <ul>
+                            <li>Research → Write → Edit → Publish</li>
+                            <li>SEO optimization</li>
+                            <li>Multi-language translation</li>
+                        </ul>
+                    </div>
+                    <div class="card">
+                        <h4>💼 Sales Automation</h4>
+                        <ul>
+                            <li>Lead research and enrichment</li>
+                            <li>Personalized email generation</li>
+                            <li>CRM data entry</li>
+                        </ul>
+                    </div>
+                    <div class="card">
+                        <h4>🔍 Market Intelligence</h4>
+                        <ul>
+                            <li>Competitor monitoring</li>
+                            <li>Trend analysis</li>
+                            <li>Report generation</li>
+                        </ul>
+                    </div>
+                    <div class="card">
+                        <h4>💻 Code Review</h4>
+                        <ul>
+                            <li>Static analysis</li>
+                            <li>Security review</li>
+                            <li>Documentation generation</li>
+                        </ul>
+                    </div>
+                    <div class="card">
+                        <h4>🎯 Data Processing</h4>
+                        <ul>
+                            <li>ETL pipelines</li>
+                            <li>Quality validation</li>
+                            <li>Schema transformation</li>
+                        </ul>
+                    </div>
+                    <div class="card">
+                        <h4>🎧 Customer Support</h4>
+                        <ul>
+                            <li>Ticket triage</li>
+                            <li>Knowledge base search</li>
+                            <li>Response drafting</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="slide-notes" style="display: none;">
+                CrewAI excels across many domains. Content teams use it to scale production. Sales teams automate research and outreach. Engineering teams review code and generate docs. The pattern is consistent - break complex work into specialized roles, let agents collaborate, get better results faster.
+            </div>
+        </section>
+
+        <!-- Slide 12: DevRel Strategy -->
+        <section class="slide" data-slide-id="12">
+            <div class="slide-content">
+                <h2>Developer Relations Strategy</h2>
+                <div class="grid grid-2">
+                    <div class="card">
+                        <h3>🎯 Goals</h3>
+                        <ul class="content-list">
+                            <li>Scale to 100K+ developers</li>
+                            <li>Build vibrant contributor community</li>
+                            <li>Create thriving ecosystem</li>
+                            <li>Become multi-agent standard</li>
+                        </ul>
+                    </div>
+                    <div class="card">
+                        <h3>📅 90-Day Plan</h3>
+                        <ul class="content-list">
+                            <li><strong>Days 0-30:</strong> Foundation & templates</li>
+                            <li><strong>Days 31-60:</strong> Community & integrations</li>
+                            <li><strong>Days 61-90:</strong> Hackathons & cookbook</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="content-highlight" style="margin-top: 2rem;">
+                    <h4>Five Pillars: Content • Code • Community • Enablement • Feedback</h4>
+                    <p style="margin-top: 1rem;">Weekly recipes, biweekly livestreams, monthly hack nights, quarterly hackathons</p>
+                </div>
+                <div style="margin-top: 2rem; text-align: center;">
+                    <a href="index.html" class="btn btn-primary" style="text-decoration: none;">View Full Strategy</a>
+                    <a href="use-cases.html" class="btn btn-secondary" style="text-decoration: none;">Explore Use Cases</a>
+                </div>
+            </div>
+            <div class="slide-notes" style="display: none;">
+                Our developer relations strategy focuses on five pillars: creating educational content, shipping production-ready code, building community, enabling developers quickly, and maintaining a strong feedback loop. The 90-day plan establishes foundation, amplifies reach, then accelerates ecosystem growth. Visit the main page to see the complete strategy.
+            </div>
+        </section>
+
+    </div>
+
+    <!-- Slide Controls -->
+    <div class="slide-controls">
+        <div class="slide-nav-buttons">
+            <button id="prev-slide" class="slide-nav-button">← Previous</button>
+            <button id="next-slide" class="slide-nav-button">Next →</button>
+        </div>
+        
+        <div class="slide-counter" id="slide-counter">
+            <span class="current">1</span> / 12
+        </div>
+        
+        <div class="slide-actions">
+            <button id="toggle-notes" class="action-button" title="Toggle speaker notes (N)">📝</button>
+            <button id="toggle-narration" class="action-button" title="Toggle narration">🔇</button>
+            <button id="toggle-fullscreen" class="action-button" title="Toggle fullscreen (F)">⛶</button>
+        </div>
+    </div>
+
+    <!-- Speaker Notes Panel -->
+    <div id="notes-panel" class="notes-panel">
+        <div class="notes-content" id="notes-content">
+            Select a slide to view speaker notes
+        </div>
+    </div>
+
+    <!-- Help Text -->
+    <div class="help-text">
+        ← → to navigate • Space to advance • F for fullscreen • N for notes • Esc to exit
+    </div>
+
+    <script src="assets/js/presentation.js"></script>
+</body>
+</html>
