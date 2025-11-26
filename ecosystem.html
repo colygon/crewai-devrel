@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CrewAI Ecosystem | LLM Providers, Tools & Deployment</title>
+    <meta name="description" content="Complete guide to CrewAI's ecosystem - LLM providers, tools, memory systems, observability, and deployment options">
+    <link rel="stylesheet" href="assets/css/styles.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🤖</text></svg>">
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="nav-brand">🤖 CrewAI DevRel</div>
+            <button class="mobile-menu-toggle" aria-label="Toggle menu" aria-expanded="false">☰</button>
+            <ul class="nav-links">
+                <li><a href="index.html">Overview</a></li>
+                <li><a href="how-it-works.html">How it Works</a></li>
+                <li><a href="use-cases.html">Use Cases</a></li>
+                <li><a href="ecosystem.html" class="active">Ecosystem</a></li>
+                <li><a href="https://github.com/crewAIInc/crewAI" target="_blank" rel="noopener">GitHub ↗</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <section class="hero">
+        <div class="hero-content">
+            <h1>CrewAI Ecosystem</h1>
+            <p>Integrate with any LLM provider, extend with tools, persist with memory, deploy anywhere</p>
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="container">
+            <h2 class="text-center mb-xl">LLM Providers</h2>
+            <div class="grid grid-3">
+                <div class="card">
+                    <h3>🤖 OpenAI</h3>
+                    <p>GPT-4, GPT-4 Turbo, GPT-3.5</p>
+                    <pre><code class="language-python">from crewai import Agent
+
+agent = Agent(
+    role="Analyst",
+    llm="gpt-4o",  # or gpt-3.5-turbo
+    ...
+)</code></pre>
+                </div>
+                <div class="card">
+                    <h3>🧠 Anthropic</h3>
+                    <p>Claude 3 Opus, Sonnet, Haiku</p>
+                    <pre><code class="language-python">agent = Agent(
+    role="Writer",
+    llm="claude-3-5-sonnet-20241022",
+    ...
+)</code></pre>
+                </div>
+                <div class="card">
+                    <h3>🌐 Google</h3>
+                    <p>Gemini Pro, Gemini Flash</p>
+                    <pre><code class="language-python">agent = Agent(
+    role="Researcher",
+    llm="gemini/gemini-pro",
+    ...
+)</code></pre>
+                </div>
+            </div>
+            
+            <div class="card mt-xl">
+                <h3>Dynamic Provider Selection</h3>
+                <p>Switch providers based on environment or task requirements:</p>
+                <pre><code class="language-python">import os
+from crewai import Agent
+
+# Read from environment
+llm_provider = os.getenv("LLM_PROVIDER", "gpt-4o")
+
+agent = Agent(
+    role="Flexible Agent",
+    llm=llm_provider,
+    ...
+)
+
+# Or choose based on task type
+def get_llm_for_task(task_type):
+    if task_type == "research":
+        return "gpt-3.5-turbo"  # Fast and cost-effective
+    elif task_type == "writing":
+        return "claude-3-5-sonnet-20241022"  # Best for creative content
+    elif task_type == "code":
+        return "gpt-4o"  # Best for code generation
+    return "gpt-4o"  # Default</code></pre>
+            </div>
+        </div>
+    </section>
+
+    <section class="section bg-gradient">
+        <div class="container">
+            <h2 class="text-center mb-xl">Tools & Connectors</h2>
+            <div class="grid grid-2">
+                <div class="card">
+                    <h3>🔍 Built-in Tools</h3>
+                    <ul class="content-list">
+                        <li><strong>SerperDevTool:</strong> Google search via Serper API</li>
+                        <li><strong>WebsiteSearchTool:</strong> Scrape and extract website content</li>
+                        <li><strong>FileReadTool:</strong> Read local files</li>
+                        <li><strong>FileWriteTool:</strong> Write to local files</li>
+                        <li><strong>DirectoryReadTool:</strong> List directory contents</li>
+                        <li><strong>CodeInterpreterTool:</strong> Execute Python code safely</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h3>🛠️ Custom Tools</h3>
+                    <p>Create domain-specific tools for your needs:</p>
+                    <pre><code class="language-python">from crewai_tools import BaseTool
+
+class APIQueryTool(BaseTool):
+    name: str = "API Query"
+    description: str = "Query REST API"
+    
+    def _run(self, endpoint: str) -> str:
+        import requests
+        response = requests.get(endpoint)
+        return response.json()</code></pre>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="container">
+            <h2 class="text-center mb-xl">Memory Systems</h2>
+            <div class="grid grid-3">
+                <div class="card">
+                    <h3>💾 Short-term Memory</h3>
+                    <p>Conversation context within current session</p>
+                </div>
+                <div class="card">
+                    <h3>🗄️ Long-term Memory</h3>
+                    <p>Persistent learnings across sessions</p>
+                </div>
+                <div class="card">
+                    <h3>🏷️ Entity Memory</h3>
+                    <p>Knowledge about people, places, things</p>
+                </div>
+            </div>
+            
+            <div class="card mt-xl">
+                <h3>Vector Database Configuration</h3>
+                <pre><code class="language-python">from crewai import Crew
+
+crew = Crew(
+    agents=[agent1, agent2],
+    tasks=[task1, task2],
+    memory=True,
+    memory_config={
+        "provider": "chroma",  # or lancedb, qdrant
+        "config": {
+            "collection_name": "my_crew_memory",
+            "path": "./memory",
+            "embedding_function": "openai"  # or other
+        }
+    }
+)</code></pre>
+            </div>
+        </div>
+    </section>
+
+    <section class="section bg-gradient">
+        <div class="container">
+            <h2 class="text-center mb-xl">Observability & Monitoring</h2>
+            <div class="grid grid-2">
+                <div class="card">
+                    <h3>📊 Logging</h3>
+                    <pre><code class="language-python">import logging
+
+logging.basicConfig(level=logging.INFO)
+
+crew = Crew(
+    agents=[agent1, agent2],
+    tasks=[task1, task2],
+    verbose=True  # Enable detailed logs
+)</code></pre>
+                </div>
+                <div class="card">
+                    <h3>🔭 OpenTelemetry</h3>
+                    <pre><code class="language-python">from opentelemetry import trace
+from crewai import Crew
+
+tracer = trace.get_tracer(__name__)
+
+with tracer.start_as_current_span("crew_execution"):
+    result = crew.kickoff(inputs)</code></pre>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="container">
+            <h2 class="text-center mb-xl">Deployment Options</h2>
+            <div class="grid grid-3">
+                <div class="card">
+                    <h3>☁️ Vercel</h3>
+                    <p>Serverless functions for API crews</p>
+                    <pre><code class="language-python"># api/crew.py
+from crewai import Crew
+
+def handler(request):
+    crew = Crew(...)
+    result = crew.kickoff()
+    return {"result": result}</code></pre>
+                </div>
+                <div class="card">
+                    <h3>🐳 Docker</h3>
+                    <p>Containerized crews for any environment</p>
+                    <pre><code class="language-dockerfile">FROM python:3.11-slim
+COPY . /app
+WORKDIR /app
+RUN pip install crewai
+CMD ["python", "crew.py"]</code></pre>
+                </div>
+                <div class="card">
+                    <h3>⚡ AWS Lambda</h3>
+                    <p>Event-driven crew execution</p>
+                    <pre><code class="language-python">def lambda_handler(event, context):
+    crew = Crew(...)
+    result = crew.kickoff(
+        inputs=event
+    )
+    return result</code></pre>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div>
+                    <p>&copy; 2024 CrewAI Developer Relations Strategy</p>
+                    <p class="text-muted">Built with ❤️ for the CrewAI community</p>
+                </div>
+                <ul class="footer-links">
+                    <li><a href="https://github.com/colygon/crewai-devrel">GitHub</a></li>
+                    <li><a href="https://docs.crewai.com">Documentation</a></li>
+                    <li><a href="https://crewai.com">CrewAI.com</a></li>
+                </ul>
+            </div>
+        </div>
+    </footer>
+    <script src="assets/js/main.js"></script>
+</body>
+</html>
